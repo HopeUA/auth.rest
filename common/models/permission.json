@@ -1,0 +1,22 @@
+{
+  "name": "Permission",
+  "plural": "permissions",
+  "base": "PersistedModel",
+  "idInjection": true,
+  "strict": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "policy": {
+      "type": "String",
+      "id": true,
+      "required": true,
+      "index": true
+    },
+    "scope": "String"
+  },
+  "validations": [],
+  "relations": {},
+  "methods": {}
+}

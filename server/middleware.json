@@ -1,0 +1,23 @@
+{
+  "initial:before": {},
+  "initial": {},
+  "session": {},
+  "auth": {
+    "./middleware/auth": {}
+  },
+  "parse": {},
+  "routes": {
+    "loopback#rest": {
+      "paths": [
+        "${restApiRoot}"
+      ]
+    }
+  },
+  "files": {},
+  "final": {
+    "loopback#urlNotFound": {}
+  },
+  "final:after": {
+    "loopback#errorHandler": {}
+  }
+}

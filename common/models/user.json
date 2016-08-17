@@ -1,0 +1,43 @@
+{
+  "name": "User",
+  "description": "Application user",
+  "plural": "users",
+  "base": "PersistedModel",
+  "idInjection": true,
+  "strict": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "id": {
+      "type": "String",
+      "id": true,
+      "required": true,
+      "index": true
+    },
+    "email": {
+      "type": "String",
+      "required": true
+    },
+    "firstName": "String",
+    "lastName": "String",
+    "registrationDate": "Date",
+    "passwordHash": {
+      "type": "String",
+      "required": true
+    }
+  },
+  "validations": [],
+  "relations": {
+    "perm": {
+      "type": "embedsMany",
+      "model": "Permission",
+      "property": "permissions",
+      "options": {
+        "validate": true,
+        "forceId": false
+      }
+    }
+  },
+  "methods": {}
+}
