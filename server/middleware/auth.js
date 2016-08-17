@@ -12,7 +12,7 @@ module.exports = () => {
             request.user = getAnonymousUser();
         } else {
             try {
-                request.user = await getCurrentUser();
+                request.user = User.toPublic(await getCurrentUser());
             } catch (error) {
                 return next(error);
             }
@@ -20,9 +20,10 @@ module.exports = () => {
 
         function getAnonymousUser() {
             return new User({
-                id: 0,
+                id: '',
                 firstName: "Anonymous",
-                email: "guest@hope.ua"
+                email: "guest@hope.ua",
+                permissions: []
             });
         }
 

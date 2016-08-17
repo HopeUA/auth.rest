@@ -1,7 +1,7 @@
 {
   "name": "auth.service",
   "description": "Hope Authorization Service",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "main": "server/server.js",
   "scripts": {
     "start": "NODE_PATH=. node -r babel-register .",

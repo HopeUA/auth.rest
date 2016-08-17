@@ -26,6 +26,10 @@
   "legacyExplorer": false,
   "service": {
     "domain": "app.domain",
-    "name": "service"
+    "name": "service",
+    "defaultAdmin": {
+      "email": "admin@example.com",
+      "password": "password"
+    }
   }
 }
