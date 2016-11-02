@@ -1,8 +1,14 @@
 import ShortId from 'shortid';
-import Acl from 'server/utils/acl';
-import Prepare from 'server/utils/prepareModel';
-import { Hash } from 'server/utils/bcrypt';
+import Acl from 'common/utils/acl';
+import Prepare from 'common/utils/prepareModel';
+import { Hash } from 'common/utils/bcrypt';
 
+/**
+ * TODO Систематизировать запросы:
+ * TODO beforeRemote – проверка авторизации
+ * TODO remote – обработка запроса
+ * TODO afterRemote – очистка результата от непубличных данных
+ */
 module.exports = (User) => {
     Prepare(User);
 
@@ -17,7 +23,7 @@ module.exports = (User) => {
      */
     User.beforeRemote('create', async (ctx, user, next) => {
         try {
-            if (!Acl.isGranted(ctx.req.user, 'users.write')) {
+            if (!Acl.isGranted(ctx.req.user, 'users:write')) {
                 const error = new Error('Access denied');
                 error.statusCode = 401;
                 return next(error);
@@ -38,6 +44,10 @@ module.exports = (User) => {
 
         next();
     });
+    User.afterRemote('create', (ctx, user, next) => {
+        ctx.result = User.toPublic(user);
+        next();
+    });
     User.observe('before save', async (ctx) => {
         // Создание нового пользователя, генерируем ID
         if (ctx.isNewInstance) {
@@ -56,7 +66,7 @@ module.exports = (User) => {
      */
     User.beforeRemote('getAll', async (ctx, data, next) => {
         try {
-            if (!Acl.isGranted(ctx.req.user, 'users.read')) {
+            if (!Acl.isGranted(ctx.req.user, 'users:read')) {
                 const error = new Error('Access denied');
                 error.statusCode = 401;
                 return next(error);
@@ -85,7 +95,7 @@ module.exports = (User) => {
      */
     User.beforeRemote('getOne', async (ctx, data, next) => {
         try {
-            if (!Acl.isGranted(ctx.req.user, 'users.read')) {
+            if (!Acl.isGranted(ctx.req.user, 'users:read')) {
                 const error = new Error('Access denied');
                 error.statusCode = 401;
                 return next(error);
@@ -109,11 +119,35 @@ module.exports = (User) => {
     });
 
     /**
+     * GET /users/self
+     */
+    User.remoteMethod('self', {
+        http: { verb: 'get', path: '/self'},
+        accepts: {
+            arg: 'req',
+            type: 'object',
+            http: { source: 'req' }
+        },
+        returns: { type: 'Object', root: true },
+        isStatic: true
+    });
+    User.self = async (req) => {
+        const user = req.user;
+        if (user.id === '') {
+            const error = new Error('Access denied');
+            error.statusCode = 401;
+            throw error;
+        }
+
+        return User.toPublic(user);
+    };
+
+    /**
      * DELETE /users/:id
      */
     User.beforeRemote('deleteById', async (ctx, user, next) => {
         try {
-            if (!Acl.isGranted(ctx.req.user, 'users.write')) {
+            if (!Acl.isGranted(ctx.req.user, 'users:write')) {
                 const error = new Error('Access denied');
                 error.statusCode = 401;
                 return next(error);
@@ -141,7 +175,7 @@ module.exports = (User) => {
     });
     User.beforeRemote('editPermissions', async (ctx, user, next) => {
         try {
-            if (!Acl.isGranted(ctx.req.user, 'users.write')) {
+            if (!Acl.isGranted(ctx.req.user, 'users:write')) {
                 const error = new Error('Access denied');
                 error.statusCode = 401;
                 return next(error);
@@ -154,17 +188,10 @@ module.exports = (User) => {
     });
     User.prototype.editPermissions = async function(permissions) {
         const user = this;
-        if (!Array.isArray(permissions)) {
-            permissions = [permissions];
-        }
 
-        await user.perm.destroyAll();
-
-        for (let permission of permissions) {
-            await user.perm.create(permission);
-        }
-        User.toPublic(user);
-
-        return user;
+        user.permissions = permissions;
+        await user.save();
+        
+        return User.toPublic(user);
     };
 };

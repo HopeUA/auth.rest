@@ -1,7 +1,7 @@
 import ShortId from 'shortid';
 import Moment from 'moment';
-import Prepare from 'server/utils/prepareModel';
-import { Compare } from 'server/utils/bcrypt';
+import Prepare from 'common/utils/prepareModel';
+import { Compare } from 'common/utils/bcrypt';
 
 module.exports = (Token) => {
     Prepare(Token, { clean: true });

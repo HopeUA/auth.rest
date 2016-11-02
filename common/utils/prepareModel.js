@@ -91,21 +91,10 @@ export default function (Model, options = {}) {
     // };
 
     /**
-     * TODO Код ответа 204
      * DELETE /model/:id
      */
-    // Model.remoteMethod('deleteById', {
-    //     http: { verb: 'del', path: '/:id' },
-    //     accepts: {
-    //         arg: 'id',
-    //         type: 'any',
-    //         required: true,
-    //         http: { source: 'path' }
-    //     },
-    //     returns: {
-    //         arg: 'count',
-    //         type: 'object',
-    //         root: true
-    //     }
-    // });
+    Model.afterRemote('deleteById', (ctx, instance, next) => {
+        ctx.res.statusCode = 204;
+        next();
+    });
 }

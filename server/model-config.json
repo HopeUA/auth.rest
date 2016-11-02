@@ -20,9 +20,5 @@
   "Token": {
     "dataSource": "mongo",
     "public": true
-  },
-  "Permission": {
-    "dataSource": "mongo",
-    "public": false
   }
 }

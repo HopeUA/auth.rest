@@ -1,14 +1,15 @@
 {
   "name": "auth.service",
   "description": "Hope Authorization Service",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "main": "server/server.js",
+  "license": "MIT",
+  "author": "Sergey Sadovoi <sergey@hope.ua>",
   "scripts": {
     "start": "NODE_PATH=. node -r babel-register .",
-    "dev": "NODE_PATH=. NODE_ENV=development node -r babel-register ."
+    "dev": "NODE_PATH=. NODE_ENV=development node -r babel-register .",
+    "watch": "nodemon --exec npm run dev"
   },
-  "author": "Sergey Sadovoi <sergey@hope.ua>",
-  "license": "MIT",
   "dependencies": {
     "babel-plugin-transform-async-to-generator": "^6.8.0",
     "babel-plugin-transform-es2015-modules-commonjs": "^6.11.5",
@@ -29,6 +30,6 @@
     ]
   },
   "devDependencies": {
-    "loopback-component-explorer": "^2.5.0"
+    "nodemon": "^1.11.0"
   }
 }

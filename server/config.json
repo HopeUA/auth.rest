@@ -25,7 +25,7 @@
   },
   "legacyExplorer": false,
   "service": {
-    "domain": "app.domain",
+    "group": "group",
     "name": "service",
     "defaultAdmin": {
       "email": "admin@example.com",

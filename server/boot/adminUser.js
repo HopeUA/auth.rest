@@ -1,4 +1,4 @@
-import { Hash } from 'server/utils/bcrypt';
+import { Hash } from 'common/utils/bcrypt';
 
 async function init(app) {
     const User = app.models.User;
@@ -13,28 +13,32 @@ async function init(app) {
         return;
     }
 
+    const permissions = {
+        [service.group]: {
+            [service.name]: {
+                'users:read': true,
+                'users:write': true
+            }
+        }
+    };
+
     const user = await User.create({
         email: service.defaultAdmin.email,
         passwordHash: await Hash(service.defaultAdmin.password),
         firstName: 'Hope',
-        lastName: 'Admin'
+        lastName: 'Admin',
+        permissions
     });
 
-    const permissions = [
-        { policy: `${service.domain}.${service.name}.users.read` },
-        { policy: `${service.domain}.${service.name}.users.write` }
-    ];
-    for (let permission of permissions) {
-        await user.perm.create(permission);
-    }
-
-    console.log(`Default admin user #${user.id} created`);
+    console.log(`Default admin user (${user.id}) created`);
 }
 
-module.exports = (app, next) => {
-    init(app).then(() => {
-        next();
-    }).catch((error) => {
-        console.error(`Admin User boot error: ${error.message}`);
-    });
+module.exports = async (app, next) => {
+    try {
+        await init(app);
+    } catch (err) {
+        console.error(`Admin User boot error: ${err.message}`);
+    }
+
+    next();
 };

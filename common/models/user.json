@@ -25,19 +25,7 @@
     "passwordHash": {
       "type": "String",
       "required": true
-    }
-  },
-  "validations": [],
-  "relations": {
-    "perm": {
-      "type": "embedsMany",
-      "model": "Permission",
-      "property": "permissions",
-      "options": {
-        "validate": true,
-        "forceId": false
-      }
-    }
-  },
-  "methods": {}
+    },
+    "permissions": "Object"
+  }
 }

@@ -12,7 +12,7 @@ module.exports = () => {
             request.user = getAnonymousUser();
         } else {
             try {
-                request.user = User.toPublic(await getCurrentUser());
+                request.user = await getCurrentUser();
             } catch (error) {
                 return next(error);
             }

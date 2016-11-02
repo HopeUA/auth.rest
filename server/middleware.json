@@ -1,9 +1,11 @@
 {
   "initial:before": {},
-  "initial": {},
+  "initial": {
+    "./middlewares/HidePoweredBy": {}
+  },
   "session": {},
   "auth": {
-    "./middleware/auth": {}
+    "./middlewares/Auth": {}
   },
   "parse": {},
   "routes": {
