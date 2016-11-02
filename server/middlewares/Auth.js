@@ -1,9 +1,10 @@
 import Moment from 'moment';
+import wrap from 'common/utils/wrap';
 
 module.exports = () => {
-    return async (request, response, next) => {
+    return wrap(async (request, response, next) => {
         const app = request.app;
-        const User = app.models.User;
+        const User = app.models.AppUser;
         const Token = app.models.Token;
 
         const accessToken = request.headers.authorization ? request.headers.authorization.replace('Bearer ', '') : null;
@@ -56,5 +57,5 @@ module.exports = () => {
         }
 
         next();
-    }
+    });
 };

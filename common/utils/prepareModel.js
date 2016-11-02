@@ -1,4 +1,5 @@
 export default function (Model, options = {}) {
+    Model.disableRemoteMethod('create', true);
     Model.disableRemoteMethod('upsert', true);
     Model.disableRemoteMethod('updateAll', true);
     Model.disableRemoteMethod('updateAttributes', false);
@@ -29,7 +30,7 @@ export default function (Model, options = {}) {
     } catch(error) {}
 
     if (options.clean) {
-        Model.disableRemoteMethod('create', true);
+        // Model.disableRemoteMethod('create', true);
         Model.disableRemoteMethod('deleteById', true);
 
         return;
@@ -68,33 +69,4 @@ export default function (Model, options = {}) {
 
         return result;
     };
-
-    /**
-     * TODO Код ответа 201
-     * POST /model
-     */
-    // Model.remoteMethod('createOne', {
-    //     http: { verb: 'post', path: '/' },
-    //     accepts: {
-    //         arg: 'data',
-    //         type: 'object',
-    //         http: { source: 'body' }
-    //     },
-    //     returns: {
-    //         arg: 'data',
-    //         type: Model.modelName,
-    //         root: true
-    //     }
-    // });
-    // Model.createOne = () => {
-    //     return Promise.resolve();
-    // };
-
-    /**
-     * DELETE /model/:id
-     */
-    Model.afterRemote('deleteById', (ctx, instance, next) => {
-        ctx.res.statusCode = 204;
-        next();
-    });
 }

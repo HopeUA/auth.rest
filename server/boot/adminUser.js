@@ -1,7 +1,7 @@
 import { Hash } from 'common/utils/bcrypt';
 
 async function init(app) {
-    const User = app.models.User;
+    const User = app.models.AppUser;
     const service = app.get('service');
 
     if (!service.defaultAdmin) {
