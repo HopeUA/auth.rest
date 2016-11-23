@@ -30,7 +30,7 @@ module.exports = (User) => {
         },
         returns: {
             arg: 'data',
-            type: 'AppUser',
+            type: 'User',
             root: true
         }
     });

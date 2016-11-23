@@ -1,5 +1,5 @@
 {
-  "name": "AppUser",
+  "name": "User",
   "description": "Application user",
   "plural": "users",
   "base": "PersistedModel",

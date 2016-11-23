@@ -39,7 +39,7 @@ module.exports = (Token) => {
     };
 
     async function passwordGrantType(data) {
-        const User = Token.app.models.AppUser;
+        const User = Token.app.models.User;
         const { username, password } = data;
 
         if (typeof username !== 'string' || username.length === 0) {
@@ -88,7 +88,7 @@ module.exports = (Token) => {
     }
 
     async function refreshTokenGrantType(data) {
-        const User = Token.app.models.AppUser;
+        const User = Token.app.models.User;
         const refreshToken = data.refresh_token;
 
         // Get token

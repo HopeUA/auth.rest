@@ -1,7 +1,7 @@
 import { Hash } from 'common/utils/bcrypt';
 
 async function init(app) {
-    const User = app.models.AppUser;
+    const User = app.models.User;
     const service = app.get('service');
 
     if (!service.defaultAdmin) {
@@ -22,9 +22,9 @@ async function init(app) {
         }
     };
 
-    const user = await User.create({
+    const user = await User.createOne({
         email: service.defaultAdmin.email,
-        passwordHash: await Hash(service.defaultAdmin.password),
+        password: service.defaultAdmin.password,
         firstName: 'Hope',
         lastName: 'Admin',
         permissions

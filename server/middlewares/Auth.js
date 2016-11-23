@@ -4,7 +4,7 @@ import wrap from 'common/utils/wrap';
 module.exports = () => {
     return wrap(async (request, response, next) => {
         const app = request.app;
-        const User = app.models.AppUser;
+        const User = app.models.User;
         const Token = app.models.Token;
 
         const accessToken = request.headers.authorization ? request.headers.authorization.replace('Bearer ', '') : null;
