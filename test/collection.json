@@ -1,0 +1,303 @@
+{
+	"variables": [],
+	"info": {
+		"name": "Auth REST Service",
+		"_postman_id": "96f9f5ed-e30f-1031-f31e-a90bc510a0f6",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "[Auth] Get access token",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": "/**\n * Check status and headers\n */ \ntests['Status code'] = responseCode.code === 201;\n\n/**\n * Check response body\n */ \nconst token = JSON.parse(responseBody);\ntests[\"Access granted\"] = !!token.accessToken;\n\n/**\n * Store data\n */\npostman.setEnvironmentVariable('accessToken', token.accessToken);\npostman.setEnvironmentVariable('refreshToken', token.refreshToken);\npostman.setEnvironmentVariable('adminUserId', token.userId);\n"
+					}
+				}
+			],
+			"request": {
+				"url": "{{auth.host}}/v1/token",
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "username",
+							"value": "admin@test.com",
+							"type": "text",
+							"enabled": true
+						},
+						{
+							"key": "password",
+							"value": "test",
+							"type": "text",
+							"enabled": true
+						},
+						{
+							"key": "grant_type",
+							"value": "password",
+							"type": "text",
+							"enabled": true
+						}
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "[Auth] Refresh token",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": "/**\n * Check status and headers\n */ \ntests['Status code'] = responseCode.code === 201;\n\n/**\n * Check response body\n */ \nconst token = JSON.parse(responseBody);\ntests[\"Refresh token\"] = !!token.accessToken;\n\n/**\n * Store data\n */\npostman.setEnvironmentVariable('accessToken', token.accessToken);\n"
+					}
+				}
+			],
+			"request": {
+				"url": "{{auth.host}}/v1/token",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "grant_type",
+							"value": "refresh_token",
+							"type": "text",
+							"enabled": true
+						},
+						{
+							"key": "refresh_token",
+							"value": "{{refreshToken}}",
+							"type": "text",
+							"enabled": true
+						}
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "[Auth] Create user",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": "/**\n * Check status and headers\n */ \ntests['Status code'] = responseCode.code === 201;\n\n/**\n * Check response body\n */ \nconst user = JSON.parse(responseBody);\ntests['User created'] = user.id !== '';\n\n/**\n * Store data\n */\npostman.setEnvironmentVariable('testUserId', user.id);\n"
+					}
+				}
+			],
+			"request": {
+				"url": "{{auth.host}}/v1/users",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{accessToken}}",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"user@test.com\",\n    \"firstName\": \"Test\",\n    \"lastName\": \"User\",\n    \"password\": \"test\"\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "[Auth] User list",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": "/**\n * Check status and headers\n */ \ntests['Status code'] = responseCode.code === 200;\n\n/**\n * Check response body\n */ \nconst users = JSON.parse(responseBody);\ntests['User list'] = Array.isArray(users) && users[0].id !== '';\n"
+					}
+				}
+			],
+			"request": {
+				"url": "{{auth.host}}/v1/users",
+				"method": "GET",
+				"header": [
+					{
+						"key": "//Content-Type",
+						"value": "application/json",
+						"description": "",
+						"disabled": true
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{accessToken}}",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"sergey@hope.ua\",\n    \"firstName\": \"Sergey\",\n    \"lastName\": \"Sadovoi\",\n    \"password\": \"Krevedko\"\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "[Auth] Give permissions",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": "/**\n * Check status and headers\n */ \ntests['Status code'] = responseCode.code === 200;\n\n/**\n * Check response body\n */ \nconst user = JSON.parse(responseBody);\nconst group = postman.getEnvironmentVariable('service.group');\ntests[\"Permissions #1\"] = user.permissions[group].service['role:one'] === 'string';\ntests[\"Permissions #2\"] = Array.isArray(user.permissions[group].service['role:two']);\ntests[\"Permissions #3\"] = user.permissions[group].service['role:three'] === true;\n"
+					}
+				}
+			],
+			"request": {
+				"url": "{{auth.host}}/v1/users/{{testUserId}}/permissions",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{accessToken}}",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"{{service.group}}\": {\n    \"service\": {\n      \"role:one\": \"string\",\n      \"role:two\": [\n        \"array1\",\n        \"array2\",\n        \"array3\"\n      ],\n      \"role:three\": true\n    }\n  }\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "[Auth] User single",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": "/**\n * Check status and headers\n */ \ntests['Status code'] = responseCode.code === 200;\n\n/**\n * Check response body\n */ \nconst user = JSON.parse(responseBody);\ntests['User single'] = user.id !== '';\n"
+					}
+				}
+			],
+			"request": {
+				"url": "{{auth.host}}/v1/users/{{testUserId}}",
+				"method": "GET",
+				"header": [
+					{
+						"key": "//Content-Type",
+						"value": "application/json",
+						"description": "",
+						"disabled": true
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{accessToken}}",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"sergey@hope.ua\",\n    \"firstName\": \"Sergey\",\n    \"lastName\": \"Sadovoi\",\n    \"password\": \"Krevedko\"\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "[Auth] Delete user",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": "/**\n * Check status and headers\n */ \ntests['Status code'] = responseCode.code === 204;\n"
+					}
+				}
+			],
+			"request": {
+				"url": "{{auth.host}}/v1/users/{{testUserId}}",
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "//Content-Type",
+						"value": "application/json",
+						"description": "",
+						"disabled": true
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{accessToken}}",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "[Auth] Get self",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": "/**\n * Check status and headers\n */ \ntests['Status code'] = responseCode.code === 200;\n\n/**\n * Check response body\n */ \nconst user = JSON.parse(responseBody);\nconst adminUserId = postman.getEnvironmentVariable('adminUserId');\ntests[\"Get self\"] = user.id === adminUserId;\n"
+					}
+				}
+			],
+			"request": {
+				"url": "{{auth.host}}/v1/users/self",
+				"method": "GET",
+				"header": [
+					{
+						"key": "//Content-Type",
+						"value": "application/json",
+						"description": "",
+						"disabled": true
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{accessToken}}",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": []
+				},
+				"description": ""
+			},
+			"response": []
+		}
+	]
+}

@@ -1,14 +1,16 @@
 {
   "name": "auth.service",
   "description": "Hope Authorization Service",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "main": "server/server.js",
   "license": "MIT",
   "author": "Sergey Sadovoi <sergey@hope.ua>",
   "scripts": {
-    "start": "NODE_PATH=. node -r babel-register .",
-    "dev": "NODE_PATH=. NODE_ENV=development node -r babel-register .",
-    "watch": "nodemon --exec npm run dev"
+    "start": "NODE_PATH=. NODE_ENV=production node -r babel-register .",
+    "dev": "NODE_PATH=. NODE_ENV=development nodemon --exec \"node -r babel-register .\"",
+    "docker-up": "docker-compose -p auth -f dev/docker-compose.yml up -d",
+    "docker-stop": "docker-compose -p auth -f dev/docker-compose.yml stop",
+    "test": "newman run test/collection.json --environment test/env.json"
   },
   "dependencies": {
     "babel-plugin-transform-async-to-generator": "^6.8.0",
@@ -30,6 +32,7 @@
     ]
   },
   "devDependencies": {
+    "newman": "^3.3.0",
     "nodemon": "^1.11.0"
   },
   "repository": {

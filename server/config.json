@@ -2,29 +2,14 @@
   "restApiRoot": "/v1",
   "host": "0.0.0.0",
   "port": 3000,
+  "legacyExplorer": false,
   "remoting": {
     "context": false,
-    "rest": {
-      "normalizeHttpPath": false,
-      "xml": false
-    },
-    "json": {
-      "strict": false,
-      "limit": "100kb"
-    },
-    "urlencoded": {
-      "extended": true,
-      "limit": "100kb"
-    },
-    "cors": false,
-    "errorHandler": {
-      "disableStackTrace": false
-    }
+    "cors": false
   },
-  "legacyExplorer": false,
-  "service": {
-    "group": "group",
-    "name": "service",
+  "service":{
+    "group": "default",
+    "name": "auth",
     "defaultAdmin": {
       "email": "admin@example.com",
       "password": "password"
