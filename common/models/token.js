@@ -77,11 +77,16 @@ module.exports = (Token) => {
         }
 
         // Save tokens
+        const lifetime = {
+            [User.TYPE_USER]: [10, 'm'],
+            [User.TYPE_SERVICE]: [1, 'y']
+        };
+
         const token = await Token.create({
             accessToken: accessToken.join(''),
             refreshToken: refreshToken.join(''),
             userId: user.id,
-            expire: Moment().add(10, 'm').toDate()
+            expire: Moment().add(...lifetime[user.type]).toDate()
         });
 
         return token;
@@ -116,9 +121,14 @@ module.exports = (Token) => {
         for (let i = 0; i < 5; i++) {
             accessToken.push(ShortId.generate());
         }
-
         token.accessToken = accessToken.join('');
-        token.expire = Moment().add(10, 'm').toDate();
+
+        const lifetime = {
+            [User.TYPE_USER]: [10, 'm'],
+            [User.TYPE_SERVICE]: [1, 'y']
+        };
+        token.expire = Moment().add(...lifetime[user.type]).toDate();
+
         token.save();
 
         return token;

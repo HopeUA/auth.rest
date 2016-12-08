@@ -12,6 +12,19 @@ import { Hash } from 'common/utils/bcrypt';
 module.exports = (User) => {
     Prepare(User);
 
+    /**
+     * User types
+     *
+     * user – common account with password auth
+     * service – special account with token auth
+     */
+    User.TYPE_USER = 'user';
+    User.TYPE_SERVICE = 'service';
+    const userTypes = [
+        User.TYPE_USER,
+        User.TYPE_SERVICE
+    ];
+
     User.toPublic = (user) => {
         user.passwordHash = undefined;
         return user;
@@ -42,6 +55,14 @@ module.exports = (User) => {
         }
     });
     User.createOne = async (data) => {
+        // Type
+        if (!data.type) {
+            data.type = User.TYPE_USER;
+        }
+        if (userTypes.indexOf(data.type) === -1) {
+            throw new Error('User type not defined');
+        }
+
         // TODO Валидация данных
         const user = new User(data);
 
